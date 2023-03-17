@@ -1,0 +1,348 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: roboshop
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  labels:
+    app: web
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: web
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  selector:
+    matchLabels:
+      app: web
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: phani997/web:v1
+          ports:
+            - name: http
+              containerPort: 80
+          env:
+            - name: CATALOGUE_ADDR
+              value: catalogue
+            - name: USER_ADDR
+              value: user
+            - name: CART_ADDR
+              value: cart
+            - name: MONGODB_HOST
+              value: mongodb
+            - name: REDIS_HOST
+              value: redis
+            - name: SHIPPING_ADDR
+              value: shipping
+            - name: PAYMENT_ADDR
+              value: payment
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: MYSQL_HOST
+              value: mysql
+              ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  labels:
+    app: mongodb
+spec:
+  ports:
+    - name: mongodb
+      port: 27017
+      targetPort: 27017
+  selector:
+    app: mongodb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: phani997/mongodb:v1
+          ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+  selector:
+    app: redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis
+          ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user
+  labels:
+    app: user
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: user
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+spec:
+  selector:
+    matchLabels:
+      app: user
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+        - name: user
+          image: phani997/user:v1
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: MONGODB_HOST
+              value: mongodb
+            - name: REDIS_HOST
+              value: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart
+  labels:
+    app: cart
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: cart
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart
+spec:
+  selector:
+    matchLabels:
+      app: cart
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cart
+    spec:
+      containers:
+        - name: cart
+          image: phani997/cart:v1
+          ports:
+            - name: http
+              containerPort: 80
+          env:
+            - name: REDIS_HOST
+              value: redis
+            - name: CATALOGUE_ADDR
+              value: catalogue
+ ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: 3306
+  selector:
+    app: mysql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: phani997/mysql:v1
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: password
+          ports:
+            - name: mysql
+              containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipping
+  labels:
+    app: shipping
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: shipping
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping
+spec:
+  selector:
+    matchLabels:
+      app: shipping
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: shipping
+    spec:
+      containers:
+        - name: shipping
+          image: phani997/shipping:v1
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: MYSQL_HOST
+              value: mysql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  labels:
+    app: rabbitmq
+spec:
+  ports:
+    - name: amqp
+      port: 5672
+      targetPort: 5672
+  selector:
+    app: rabbitmq
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+spec:
+  selector:
+    matchLabels:
+      app: rabbitmq
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+  labels:
+    app: payment
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: payment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+spec:
+  selector:
+    matchLabels:
+      app: payment
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+        - name: payment
+          image: phani997/payment:latest
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: RABBITMQ_HOST
+              value: rabbitmq    
