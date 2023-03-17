@@ -11,6 +11,9 @@ services:
     depends_on:
     - catalogue
     - user
+    - cart
+    - mysql
+    - shipping
   mongodb:
     image: phani997/mongodb:v1
     container_name: mongodb
@@ -27,3 +30,30 @@ services:
     depends_on:
     - mongodb
     - redis
+  cart:
+    image: phani997/cart:v2
+    container_name: cart
+    depends_on:
+    - redis
+    - catalogue
+  mysql:
+    image: phani997/mysql:v1
+    container_name: mysql
+  shipping:
+    image: phani997/shipping:v2
+    container_name: shipping
+    depends_on:
+    - mysql
+  rabbitmq:
+    image: rabbitmq
+    container_name: rabbitmq
+  payment:
+    image: phani997/payment:v1
+    container_name: payment
+    depends_on:
+    - rabbitmq
+  ratings:
+    image: phani997/ratings:v1
+    container_name: ratings
+    depends_on:
+    - mysql
