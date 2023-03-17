@@ -4,7 +4,7 @@ networks:
     driver: bridge
 services:
   web:
-    image: web:v1
+    image: phani997/web:v1
     container_name: web
     ports:
     - "80:80"
@@ -14,7 +14,7 @@ services:
     image: mongodb:v1
     container_name: mongodb
   catalogue:
-    image: catalogue:v1
+    image: phani997/catalogue:v1
     container_name: catalogue
     depends_on:
     - mongodb
