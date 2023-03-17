@@ -11,7 +11,7 @@ services:
     depends_on:
     - catalogue
   mongodb:
-    image: mongodb:v1
+    image: phani997/mongodb:v1
     container_name: mongodb
   catalogue:
     image: phani997/catalogue:v1
