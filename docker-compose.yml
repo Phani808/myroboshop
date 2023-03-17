@@ -33,7 +33,7 @@ services:
     - mongodb
     - redis
   cart:
-    image: phani997/cart:v2
+    image: phani997/cart:v1
     container_name: cart
     depends_on:
     - redis
@@ -42,7 +42,7 @@ services:
     image: phani997/mysql:v1
     container_name: mysql
   shipping:
-    image: phani997/shipping:v2
+    image: phani997/shipping:v1
     container_name: shipping
     depends_on:
     - mysql
